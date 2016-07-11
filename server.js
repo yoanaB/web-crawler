@@ -2,7 +2,6 @@ var request = require('request');
 var express = require('express');
 var fs = require('fs');
 var cheerio = require('cheerio');
-//var URL = require('url-parse');
 var app = express();
 
 app.get('', function (req, res) {
@@ -10,19 +9,15 @@ app.get('', function (req, res) {
     var MAX_PAGES_TO_VISIT = 10;
     var baseUrl = 'https://www.youtube.com';
     var json = [];
-    var title = '', url = '/watch?v=8Zw_i0Sn8S0'; //geri-nikol or chalga
+    var title = '', url = '/watch?v=8Zw_i0Sn8S0';
 
     function nextSong(url) {
-        var nextUrl = ''
+        var nextUrl = '';
         request(baseUrl + url, function (error, response, html) {
             if (!error && response.statusCode == 200) {
                 var $ = cheerio.load(html);
                 console.log('visiting ' + (baseUrl + url));
                 title = $('#eow-title').text().trim();
-               /* if(hasntGotUrl(json, url) && json.length < MAX_PAGES_TO_VISIT){
-                    console.log(json.length)
-                    json.push({title: title, nextSongUrl: url})
-                }*/
 
                 json.push({title: title, nextSongUrl: url})
                 nextUrl = $('.autoplay-bar .thumb-wrapper').children()[0].attribs['href'];
@@ -43,41 +38,7 @@ app.get('', function (req, res) {
         })
     }
 
-    function hasntGotUrl(array, url){
-        array.forEach(function(song){
-            if(url !== song.url){
-               return true;
-            }
-        })
-    }
-
-   nextSong(url);
-    /* for (var i = 0; i < MAX_PAGES_TO_VISIT; i++) {
-     pageToVisit = baseUrl + nextSongUrl;
-     console.log(nextSongUrl);
-     request(pageToVisit, function (error, response, html) {
-     // console.log('page to visit: ' + pageToVisit);
-     if (!error && response.statusCode == 200) {
-     var $ = cheerio.load(html);
-     console.log('visiting ' + pageToVisit);
-     //var data = $(this);
-     title = $('#eow-title').text().trim();
-     nextSongUrl = $('.autoplay-bar .thumb-wrapper').children()[0].attribs['href'];
-
-     //nextSongUrl = $('.content-wrapper').children()[0].attribs['href'];
-     console.log(nextSongUrl);
-     //title = $('.content-wrapper.title').text();
-
-     json.title = title;
-     json.nextSongUrl = nextSongUrl;
-
-
-     } else {
-     console.log(error);
-     }
-     })
-
-     */
+    nextSong(url);
     res.send('Check your console!')
 })
 
